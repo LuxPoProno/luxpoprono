@@ -36,6 +36,10 @@ module.exports = async (req, res) => {
       confirmation_method: 'manual',
       confirm: true,
       receipt_email: email,
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never',
+      },
       metadata: {
         plan: plan || '',
         period: period || '',
