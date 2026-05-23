@@ -33,7 +33,6 @@ module.exports = async (req, res) => {
       amount: amount,
       currency: currency || 'eur',
       payment_method: paymentMethodId,
-      confirmation_method: 'manual',
       confirm: true,
       receipt_email: email,
       automatic_payment_methods: {
