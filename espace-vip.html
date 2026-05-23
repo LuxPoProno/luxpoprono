@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon espace VIP — LuxPoProno</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#0b0b0b;color:#f5f5f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+    .noise{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")}
+
+    .vip-card{max-width:520px;width:100%;background:linear-gradient(145deg,#141414,#1a1a1a);border:1px solid #2a2a2a;border-radius:24px;padding:3rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+    .vip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#d4a017,#c0392b,#d4a017);background-size:200% 100%;animation:gradientMove 3s ease infinite}
+    @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .vip-icon{width:80px;height:80px;background:linear-gradient(135deg,#d4a017,#f0c040);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.5rem;box-shadow:0 0 40px rgba(212,160,23,0.3)}
+    .vip-icon-inner{animation:pulse 2s ease infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+    .vip-title{font-size:1.8rem;font-weight:900;margin-bottom:0.5rem}
+    .vip-title .gold{color:#d4a017}
+    .vip-sub{color:#888;font-size:0.95rem;margin-bottom:2rem;line-height:1.5}
+
+    .vip-plan-badge{display:inline-block;background:rgba(212,160,23,0.12);border:1px solid rgba(212,160,23,0.25);color:#d4a017;padding:0.5rem 1.5rem;border-radius:50px;font-weight:700;font-size:0.85rem;margin-bottom:1.5rem}
+    .vip-plan-badge .period{color:#888;font-weight:400}
+
+    .vip-divider{height:1px;background:linear-gradient(90deg,transparent,#2a2a2a,transparent);margin:1.5rem 0}
+
+    .vip-info{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;text-align:left}
+    .vip-info-item{padding:0.75rem;background:#111;border-radius:10px;border:1px solid #1e1e1e}
+    .vip-info-label{font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:0.08em}
+    .vip-info-value{font-size:0.95rem;font-weight:700;margin-top:0.2rem}
+
+    .btn-access{display:inline-flex;align-items:center;gap:0.75rem;padding:1.2rem 2.5rem;background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;cursor:pointer;text-decoration:none;transition:all 0.3s;box-shadow:0 4px 25px rgba(212,160,23,0.25)}
+    .btn-access:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(212,160,23,0.4)}
+    .btn-access .arrow{transition:transform 0.3s}
+    .btn-access:hover .arrow{transform:translateX(5px)}
+
+    .btn-back{display:inline-block;margin-top:1.5rem;color:#555;font-size:0.85rem;text-decoration:none;transition:color 0.2s}
+    .btn-back:hover{color:#d4a017}
+
+    .stars{position:absolute;font-size:0.6rem;color:#d4a017;opacity:0.15;pointer-events:none}
+    .star1{top:15%;left:10%;animation:twinkle 3s infinite}
+    .star2{top:25%;right:12%;animation:twinkle 4s infinite 1s}
+    .star3{bottom:20%;left:8%;animation:twinkle 3.5s infinite 0.5s}
+    .star4{bottom:30%;right:10%;animation:twinkle 4.5s infinite 1.5s}
+    @keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.5}}
+
+    @media(max-width:500px){.vip-card{padding:2rem 1.5rem}.vip-info{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="noise"></div>
+
+<div class="vip-card">
+  <div class="stars star1">✦</div>
+  <div class="stars star2">✦</div>
+  <div class="stars star3">✦</div>
+  <div class="stars star4">✦</div>
+
+  <div class="vip-icon"><span class="vip-icon-inner">👑</span></div>
+  <h1 class="vip-title">Bienvenue dans ton <span class="gold">Espace VIP</span></h1>
+  <p class="vip-sub">Ton abonnement est actif. Tu as désormais accès aux pronos exclusifs, analyses et conseils LuxPoProno.</p>
+
+  <div id="plan-info" style="display:none;">
+    <div class="vip-plan-badge" id="vip-plan-badge">🔥 Bronze · <span class="period">Mensuel</span></div>
+    <div class="vip-divider"></div>
+    <div class="vip-info">
+      <div class="vip-info-item">
+        <div class="vip-info-label">Abonnement</div>
+        <div class="vip-info-value" id="vip-plan-name">Bronze</div>
+      </div>
+      <div class="vip-info-item">
+        <div class="vip-info-label">Période</div>
+        <div class="vip-info-value" id="vip-plan-period">Mensuel</div>
+      </div>
+      <div class="vip-info-item">
+        <div class="vip-info-label">Service</div>
+        <div class="vip-info-value" id="vip-service-name">Analyses VIP</div>
+      </div>
+      <div class="vip-info-item">
+        <div class="vip-info-label">Statut</div>
+        <div class="vip-info-value" style="color:#22c55e">✅ Actif</div>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://t.me/+fDa9mGYuFnBhMzMy" target="_blank" rel="noopener" class="btn-access">
+    <span>🚀</span> Accéder à mon espace VIP
+    <span class="arrow">→</span>
+  </a>
+
+  <br>
+  <a href="index.html" class="btn-back">← Retour à l'accueil LuxPoProno</a>
+</div>
+
+<script>
+  // Lire les paramètres passés depuis la page de paiement
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan') || 'Bronze';
+  const period = params.get('period') || 'mensuel';
+  const service = params.get('service') || '';
+
+  const planNames = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+  const planEmojis = { bronze: '🥉', silver: '🥈', gold: '🥇' };
+  const periodLabel = period === 'annuel' ? 'Annuel' : 'Mensuel';
+
+  const planDisplay = planNames[plan.toLowerCase()] || 'Bronze';
+  const emoji = planEmojis[plan.toLowerCase()] || '🔥';
+
+  document.getElementById('vip-plan-name').textContent = planDisplay;
+  document.getElementById('vip-plan-period').textContent = periodLabel;
+  document.getElementById('vip-service-name').textContent = decodeURIComponent(service) || 'Analyses VIP';
+  document.getElementById('vip-plan-badge').innerHTML = `${emoji} ${planDisplay} · <span class="period">${periodLabel}</span>`;
+  document.getElementById('plan-info').style.display = 'block';
+</script>
+
+</body>
+</html>

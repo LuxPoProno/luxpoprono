@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement sécurisé — LuxPoProno</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;min-height:100vh;display:flex;flex-direction:column}
+    
+    .payment-header{background:#fff;border-bottom:1px solid #e2e8f0;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+    .payment-header-brand{font-weight:900;font-size:1.1rem;display:flex;align-items:center;gap:0.5rem}
+    .payment-header-brand .gold{color:#d4a017}
+    .payment-header-brand .red{color:#c0392b}
+    .payment-header-back{color:#64748b;font-size:0.85rem;text-decoration:none;display:flex;align-items:center;gap:0.35rem;transition:color 0.2s}
+    .payment-header-back:hover{color:#d4a017}
+    .payment-header-secure{display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:#64748b;font-weight:500}
+    .payment-header-secure .lock{color:#22c55e}
+
+    .payment-main{flex:1;display:flex;max-width:1100px;margin:0 auto;padding:2rem;gap:2rem;width:100%}
+    @media(max-width:768px){.payment-main{flex-direction:column;padding:1rem}}
+
+    .payment-summary{flex:0 0 380px}
+    @media(max-width:768px){.payment-summary{flex:1}}
+    .summary-card{background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:1.5rem;position:sticky;top:2rem}
+    .summary-service{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:#64748b;font-weight:600;margin-bottom:0.25rem}
+    .summary-plan-name{font-size:1.5rem;font-weight:800;margin-bottom:0.25rem}
+    .summary-plan-name .gold{color:#d4a017}
+    .summary-plan-desc{font-size:0.9rem;color:#64748b;margin-bottom:1.5rem}
+    .summary-divider{height:1px;background:#e2e8f0;margin:1rem 0}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;font-size:0.9rem;color:#475569}
+    .summary-row.total{font-size:1.2rem;font-weight:800;color:#0f172a;padding-top:0.75rem;border-top:2px solid #e2e8f0;margin-top:0.5rem}
+    .summary-row.total .gold{color:#d4a017;font-size:1.4rem}
+    .summary-badge{background:#f0fdf4;color:#16a34a;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;display:inline-block}
+    .summary-features{margin-top:1rem}
+    .summary-feature{display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;font-size:0.85rem;color:#475569}
+    .summary-feature .check{color:#22c55e;font-weight:700;font-size:0.9rem}
+
+    .payment-form-wrap{flex:1;max-width:500px}
+    .payment-form-card{background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:2rem}
+    .payment-form-title{font-size:1.1rem;font-weight:700;margin-bottom:0.25rem}
+    .payment-form-sub{font-size:0.85rem;color:#64748b;margin-bottom:1.5rem}
+
+    .payment-methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:1.5rem}
+    .payment-method{border:2px solid #e2e8f0;border-radius:12px;padding:0.75rem 0.5rem;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.8rem;font-weight:600;color:#64748b;background:#fff}
+    .payment-method:hover{border-color:#cbd5e1}
+    .payment-method.active{border-color:#d4a017;background:#fffbeb;color:#0f172a}
+    .payment-method .icon{font-size:1.5rem;display:block;margin-bottom:0.25rem}
+
+    .payment-field{margin-bottom:1.25rem}
+    .payment-field label{display:block;font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:0.35rem}
+
+    /* Stripe Element wrapper */
+    #card-element {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      background:#fff;
+      transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    #card-element.StripeElement--focus {
+      border-color:#d4a017;
+      box-shadow:0 0 0 3px rgba(212,160,23,0.1);
+    }
+    #card-element.StripeElement--invalid {
+      border-color:#dc2626;
+      box-shadow:0 0 0 3px rgba(220,38,38,0.1);
+    }
+
+    .field-error{font-size:0.75rem;color:#dc2626;margin-top:0.25rem;font-weight:500;display:none}
+    .payment-field.error .field-error{display:block}
+    .payment-field.error #card-element{border-color:#dc2626}
+
+    .payment-secure-badge{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1rem;background:#f8fafc;border-radius:10px;font-size:0.8rem;color:#64748b;margin-bottom:1.5rem;border:1px solid #e2e8f0}
+
+    .payment-submit{width:100%;padding:1rem;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;box-shadow:0 4px 15px rgba(212,160,23,0.2);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:0.5rem}
+    .payment-submit:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(212,160,23,0.35)}
+    .payment-submit:disabled{opacity:0.7;cursor:not-allowed;transform:none}
+    .payment-submit .spinner{width:20px;height:20px;border:3px solid rgba(0,0,0,0.2);border-top-color:#0b0b0b;border-radius:50%;animation:spin 0.6s linear infinite;display:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .payment-disclaimer{font-size:0.75rem;color:#94a3b8;text-align:center;margin-top:1rem;line-height:1.4}
+
+    .payment-success{display:none;text-align:center;padding:3rem 1rem}
+    .payment-success .check-icon{width:64px;height:64px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem}
+    .payment-success h2{font-size:1.4rem;font-weight:800;margin-bottom:0.5rem}
+    .payment-success p{color:#64748b;font-size:0.9rem;margin-bottom:1.5rem;max-width:350px;margin-left:auto;margin-right:auto}
+    .payment-success .btn-home{display:inline-flex;align-items:center;gap:0.5rem;padding:0.85rem 2rem;background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;border:none;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;transition:all 0.2s}
+    .payment-success .btn-home:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(212,160,23,0.3)}
+
+    .test-hint{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:0.8rem;color:#92400e;display:flex;align-items:center;gap:0.5rem}
+    .test-hint .hint-icon{font-size:1rem}
+
+    .payment-footer{text-align:center;padding:1.5rem;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;background:#fff}
+    .payment-footer a{color:#64748b;text-decoration:none}
+
+    .promo-field{margin-bottom:1.25rem}
+    .promo-field label{display:block;font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:0.35rem}
+    .promo-field-row{display:flex;gap:0.5rem}
+    .promo-field-row input{flex:1;padding:0.75rem 1rem;border:2px solid #e2e8f0;border-radius:10px;font-size:0.95rem;font-family:'Inter',sans-serif;transition:all 0.2s;background:#fff;color:#0f172a;outline:none;text-transform:uppercase}
+    .promo-field-row input:focus{border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,0.1)}
+    .promo-field-row input::placeholder{color:#94a3b8}
+    .promo-btn{background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;border:none;border-radius:10px;padding:0.75rem 1.25rem;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;white-space:nowrap}
+    .promo-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(212,160,23,0.3)}
+    .promo-btn:disabled{opacity:0.5;cursor:default;transform:none}
+    .promo-message{font-size:0.8rem;margin-top:0.35rem;min-height:1.2em;font-weight:500}
+    .promo-message.success{color:#16a34a}
+    .promo-message.error{color:#dc2626}
+    .promo-row{border-top:1px dashed #e2e8f0;padding-top:0.5rem}
+
+    .card-error{color:#dc2626;font-size:0.8rem;font-weight:500;margin-top:0.5rem;min-height:1.2em}
+    .error-shake{animation:shake 0.4s ease}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+  </style>
+</head>
+<body>
+
+<div class="payment-header">
+  <a href="#" class="payment-header-back" id="back-link">← Retour</a>
+  <div class="payment-header-brand"><span class="gold">LUXPO</span> <span class="red">PRONO</span></div>
+  <div class="payment-header-secure"><span class="lock">🔒</span> Paiement sécurisé Stripe</div>
+</div>
+
+<div class="payment-main">
+  <!-- LEFT: Summary -->
+  <div class="payment-summary">
+    <div class="summary-card">
+      <div class="summary-service" id="summary-service">Analyses VIP</div>
+      <div class="summary-plan-name" id="summary-plan">Bronze</div>
+      <div class="summary-plan-desc" id="summary-desc">Pour commencer</div>
+      <div class="summary-divider"></div>
+      <div class="summary-row">
+        <span>Période</span>
+        <span id="summary-period" style="font-weight:600">Mensuel</span>
+      </div>
+      <div class="summary-row">
+        <span>Prix unitaire</span>
+        <span id="summary-unit-price" style="font-weight:600">€9.99</span>
+      </div>
+      <div id="summary-yr-badge" style="display:none;margin-bottom:0.75rem;">
+        <span class="summary-badge">🎉 Économise 25%</span>
+      </div>
+      <div id="summary-promo-row" class="summary-row promo-row" style="display:none;">
+        <span>Promo <strong id="summary-promo-code">LUXGRA</strong></span>
+        <span style="color:#16a34a;font-weight:700;">−<span id="summary-promo-discount">€8.99</span></span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span class="gold" id="summary-total">€9.99</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-features" id="summary-features"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Payment -->
+  <div class="payment-form-wrap">
+    <div class="payment-form-card" id="payment-card">
+      <div class="payment-form-title">Finalise ton abonnement</div>
+      <p class="payment-form-sub">Carte bancaire via Stripe — paiement sécurisé.</p>
+
+      <div class="test-hint">
+        <span class="hint-icon">🧪</span>
+        <span><strong>Mode test</strong> — utilise <strong>4242 4242 4242 4242</strong> (n'importe quelle date future, CVC 123)</span>
+      </div>
+
+      <div class="payment-methods">
+        <div class="payment-method active" data-method="card">
+          <span class="icon">💳</span> Carte
+        </div>
+        <div class="payment-method" data-method="paypal" style="opacity:0.5;cursor:not-allowed">
+          <span class="icon">🅿️</span> PayPal
+        </div>
+        <div class="payment-method" data-method="crypto" style="opacity:0.5;cursor:not-allowed">
+          <span class="icon">₿</span> Crypto
+        </div>
+      </div>
+
+      <form id="payment-form">
+        <div class="payment-field">
+          <label>Nom sur la carte</label>
+          <input type="text" id="card-name" placeholder="Jean Dupont" autocomplete="cc-name" style="width:100%;padding:0.75rem 1rem;border:2px solid #e2e8f0;border-radius:10px;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;background:#fff;color:#0f172a">
+        </div>
+
+        <div class="payment-field">
+          <label>Numéro de carte</label>
+          <div id="card-element"></div>
+          <div class="field-error" id="err-card">Les informations de carte sont invalides</div>
+        </div>
+
+        <div class="promo-field">
+          <label>Code promo</label>
+          <div class="promo-field-row">
+            <input type="text" id="promo-code" placeholder="Ton code" maxlength="20" style="text-transform:uppercase">
+            <button type="button" id="promo-apply" class="promo-btn">Appliquer</button>
+          </div>
+          <div id="promo-message" class="promo-message"></div>
+        </div>
+
+        <div class="payment-field">
+          <label>Email de confirmation</label>
+          <input type="email" id="card-email" placeholder="ton@email.com" autocomplete="email" style="width:100%;padding:0.75rem 1rem;border:2px solid #e2e8f0;border-radius:10px;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;background:#fff;color:#0f172a">
+        </div>
+
+        <div class="payment-secure-badge">
+          <span class="lock-icon">🔒</span>
+          <span>Paiement 100% sécurisé — certificat SSL & Stripe</span>
+        </div>
+
+        <div id="card-errors" class="card-error" role="alert"></div>
+
+        <button type="submit" class="payment-submit" id="payment-submit">
+          <span>Payer <span id="payment-submit-amount">€9.99</span></span>
+          <span class="spinner"></span>
+        </button>
+
+        <p class="payment-disclaimer">En cliquant, tu acceptes les conditions d'abonnement. Résiliable à tout moment.</p>
+      </form>
+
+      <div class="payment-success" id="payment-success">
+        <div class="check-icon">✅</div>
+        <h2>Paiement réussi ! 🎉</h2>
+        <p>Ton abonnement VIP est activé. Bienvenue chez LuxPoProno.</p>
+        <a href="espace-vip.html" class="btn-home" id="success-vip-link">Mon espace VIP →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="payment-footer">
+  <p><a href="../index.html">LuxPoProno</a> — L'agence des bonnes cotes © 2026</p>
+</div>
+
+<script>
+// ====== STRIPE INIT ======
+const stripe = Stripe('pk_test_51TaHWhLXYN8EiWGewWE7Hklccdjq8lhGXAdfyf4j2H014jWg2VQDfKo02lunAANgO4Rb6ouM0TM9UQchkXD8mhWg002twno74c');
+const elements = stripe.elements();
+
+const style = {
+  base: {
+    fontSize: '16px',
+    fontFamily: '"Inter", sans-serif',
+    color: '#0f172a',
+    '::placeholder': { color: '#94a3b8' },
+    padding: '0',
+  },
+  invalid: {
+    color: '#dc2626',
+    iconColor: '#dc2626',
+  },
+};
+
+const card = elements.create('card', { style });
+card.mount('#card-element');
+
+card.on('change', function(event) {
+  const displayError = document.getElementById('card-errors');
+  const field = document.getElementById('card-element').closest('.payment-field');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+    field.classList.add('error');
+  } else {
+    displayError.textContent = '';
+    field.classList.remove('error');
+    if (event.complete) field.classList.add('valid');
+    else field.classList.remove('valid');
+  }
+});
+
+// ====== URL PARAMS ======
+const params = new URLSearchParams(window.location.search);
+const plan = params.get('plan') || 'Bronze';
+const period = params.get('period') || 'mensuel';
+const service = params.get('service') || 'Analyses VIP';
+const serviceFile = params.get('serviceFile') || 'analyses-vip.html';
+
+const prices = {
+  bronze: { monthly: 9.99, yearly: 7.49, yearlyTotal: 89.88 },
+  silver: { monthly: 19.99, yearly: 14.99, yearlyTotal: 179.88 },
+  gold:   { monthly: 39.99, yearly: 29.99, yearlyTotal: 359.88 }
+};
+
+const planKey = plan.toLowerCase();
+const isYearly = period === 'annuel';
+const priceData = prices[planKey] || prices.bronze;
+
+// ---- PROMO ----
+let promoActive = false;
+function applyPriceDisplay(usePromo) {
+  const unitPrice = isYearly ? priceData.yearly : priceData.monthly;
+  const finalPrice = usePromo ? 1.00 : unitPrice;
+  const totalDisplay = isYearly && !usePromo
+    ? `€${priceData.yearlyTotal.toFixed(2)}/an`
+    : `€${finalPrice.toFixed(2)}`;
+
+  document.getElementById('summary-unit-price').textContent = isYearly && !usePromo
+    ? `€${priceData.yearly.toFixed(2)}/mois`
+    : `€${finalPrice.toFixed(2)}`;
+  document.getElementById('summary-total').textContent = totalDisplay;
+  document.getElementById('payment-submit-amount').textContent = totalDisplay;
+
+  const promoRow = document.getElementById('summary-promo-row');
+  if (usePromo) {
+    document.getElementById('summary-promo-code').textContent = 'LUXGRA';
+    document.getElementById('summary-promo-discount').textContent = `€${(unitPrice - 1.00).toFixed(2)}`;
+    promoRow.style.display = 'flex';
+  } else {
+    promoRow.style.display = 'none';
+  }
+}
+
+function validatePromo() {
+  const input = document.getElementById('promo-code');
+  const msg = document.getElementById('promo-message');
+  const code = input.value.trim().toUpperCase();
+
+  if (code === 'LUXGRA') {
+    promoActive = true;
+    msg.textContent = '✅ Code promo appliqué ! Abonnement à 1€';
+    msg.className = 'promo-message success';
+    applyPriceDisplay(true);
+  } else if (code === '') {
+    promoActive = false;
+    msg.textContent = '';
+    msg.className = 'promo-message';
+    applyPriceDisplay(false);
+  } else {
+    promoActive = false;
+    msg.textContent = '❌ Code promo invalide';
+    msg.className = 'promo-message error';
+    applyPriceDisplay(false);
+  }
+}
+
+document.getElementById('promo-apply').addEventListener('click', validatePromo);
+document.getElementById('promo-code').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); validatePromo(); }
+});
+
+// ---- INIT DISPLAY ----
+const planNames = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+const planDescs = { bronze: 'Pour commencer', silver: 'Le meilleur rapport qualité/prix', gold: 'Tout débloquer' };
+const featureSets = {
+  bronze: ['Avant-match complet', 'Stats avancées (xG, forme)', 'Support email'],
+  silver: ['Avant-match complet', 'Stats avancées (xG, forme)', 'Compos probables', 'Pronos en direct (live)', 'Groupe VIP Telegram'],
+  gold: ['Tout ce que Silver propose', 'Session coaching 1-1 (30 min/mois)', 'Archives illimitées', 'Assistant IA personnel', 'Support prioritaire 24/7']
+};
+
+document.getElementById('summary-plan').textContent = planNames[planKey] || 'Bronze';
+document.getElementById('summary-service').textContent = service;
+document.getElementById('summary-desc').textContent = planDescs[planKey];
+document.getElementById('summary-period').textContent = isYearly ? 'Annuel' : 'Mensuel';
+document.getElementById('summary-yr-badge').style.display = isYearly ? 'block' : 'none';
+document.getElementById('summary-features').innerHTML = (featureSets[planKey] || featureSets.bronze)
+  .map(f => `<div class="summary-feature"><span class="check">✓</span> ${f}</div>`).join('');
+document.getElementById('back-link').href = `services/${serviceFile}`;
+applyPriceDisplay(false);
+
+// ====== STRIPE PAYMENT ======
+const paymentForm = document.getElementById('payment-form');
+const submitBtn = document.getElementById('payment-submit');
+
+paymentForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const cardField = document.getElementById('card-element').closest('.payment-field');
+  cardField.classList.remove('error');
+  document.getElementById('card-errors').textContent = '';
+
+  const name = document.getElementById('card-name').value.trim();
+  const email = document.getElementById('card-email').value.trim();
+
+  if (!name) {
+    document.getElementById('card-name').focus();
+    document.getElementById('card-name').style.borderColor = '#dc2626';
+    setTimeout(() => document.getElementById('card-name').style.borderColor = '#e2e8f0', 3000);
+    return;
+  }
+  if (!email || !email.includes('@')) {
+    document.getElementById('card-email').focus();
+    document.getElementById('card-email').style.borderColor = '#dc2626';
+    setTimeout(() => document.getElementById('card-email').style.borderColor = '#e2e8f0', 3000);
+    return;
+  }
+
+  // Calculer le montant en centimes
+  const unitPrice = isYearly ? priceData.yearly : priceData.monthly;
+  const finalPrice = promoActive ? 1.00 : unitPrice;
+  const amount = isYearly && !promoActive ? priceData.yearlyTotal : finalPrice;
+  const amountCents = Math.round(amount * 100);
+
+  submitBtn.disabled = true;
+  submitBtn.querySelector('span').style.display = 'none';
+  submitBtn.querySelector('.spinner').style.display = 'inline-block';
+
+  try {
+    // 1. Créer un PaymentMethod avec Stripe
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: card,
+      billing_details: {
+        name: name,
+        email: email,
+      },
+    });
+
+    if (error) {
+      const displayError = document.getElementById('card-errors');
+      displayError.textContent = error.message;
+      cardField.classList.add('error');
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').style.display = 'inline';
+      submitBtn.querySelector('.spinner').style.display = 'none';
+      return;
+    }
+
+    // 2. Appeler l'API Stripe (locale ou déployée)
+    const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:3000/create-payment-intent'
+      : '/api/create-payment-intent';
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: amountCents,
+        currency: 'eur',
+        paymentMethodId: paymentMethod.id,
+        plan: planKey,
+        period: period,
+        service: service,
+        promo: promoActive,
+        email: email,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.error) {
+      document.getElementById('card-errors').textContent = result.error;
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').style.display = 'inline';
+      submitBtn.querySelector('.spinner').style.display = 'none';
+      return;
+    }
+
+    // 3. Confirmer le paiement côté client
+    const { error: confirmError } = await stripe.confirmCardPayment(result.clientSecret);
+    
+    if (confirmError) {
+      document.getElementById('card-errors').textContent = confirmError.message;
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').style.display = 'inline';
+      submitBtn.querySelector('.spinner').style.display = 'none';
+      return;
+    }
+
+    // 4. Succès !
+    document.getElementById('success-vip-link').href = 
+      `espace-vip.html?plan=${planKey}&period=${period}&service=${encodeURIComponent(service)}`;
+    paymentForm.style.display = 'none';
+    document.getElementById('payment-success').style.display = 'block';
+
+  } catch (err) {
+    document.getElementById('card-errors').textContent = 'Erreur de connexion au serveur de paiement.';
+    submitBtn.disabled = false;
+    submitBtn.querySelector('span').style.display = 'inline';
+    submitBtn.querySelector('.spinner').style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>

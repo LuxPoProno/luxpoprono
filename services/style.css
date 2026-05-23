@@ -1,0 +1,88 @@
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0b0b0b;color:#f5f5f5;overflow-x:hidden}
+::selection{background:#d4a017;color:#0b0b0b}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#1a1a1a}
+::-webkit-scrollbar-thumb{background:#d4a017;border-radius:4px}
+
+/* Header */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,11,11,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #1a1a1a;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.header-brand{font-weight:900;font-size:1.2rem}
+.header-brand .gold{color:#d4a017}
+.header-brand .red{color:#c0392b}
+.header-back{display:inline-flex;align-items:center;gap:0.5rem;color:#888;font-size:0.9rem;transition:color 0.2s}
+.header-back:hover{color:#d4a017}
+
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+
+/* Hero service */
+.service-hero{padding:8rem 2rem 4rem;text-align:center;position:relative}
+.service-hero .icon{font-size:4rem;margin-bottom:1rem;display:block}
+.service-hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800}
+.service-hero h1 .gold{color:#d4a017}
+.service-hero p{color:#888;max-width:600px;margin:1rem auto 0;font-size:1.05rem;line-height:1.6}
+.service-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(212,160,23,0.06) 0%,transparent 60%);pointer-events:none}
+
+/* Pricing toggle */
+.pricing-toggle{display:flex;align-items:center;justify-content:center;gap:1rem;margin:2rem 0 3rem}
+.pricing-toggle span{font-size:0.9rem;color:#888;font-weight:600;cursor:pointer;transition:color 0.3s}
+.pricing-toggle span.active{color:#d4a017}
+.toggle-switch{width:56px;height:30px;background:#1a1a1a;border-radius:50px;position:relative;cursor:pointer;border:2px solid #2a2a2a;transition:all 0.3s}
+.toggle-switch.active{border-color:#d4a017;background:#2a1f00}
+.toggle-switch .knob{width:22px;height:22px;background:#d4a017;border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.3s;box-shadow:0 2px 8px rgba(212,160,23,0.4)}
+.toggle-switch.active .knob{left:28px}
+.badge-economy{display:inline-block;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;margin-left:0.5rem;vertical-align:middle}
+
+/* Pricing grid */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:1rem;align-items:start}
+
+.pricing-card{background:linear-gradient(145deg,#141414,#1a1a1a);border:1px solid #222;border-radius:20px;padding:2.5rem 2rem;position:relative;transition:all 0.4s ease;overflow:hidden}
+.pricing-card:hover{border-color:#333;transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+.pricing-card.featured{border-color:#d4a017;box-shadow:0 0 30px rgba(212,160,23,0.1)}
+.pricing-card.featured::before{content:'⭐ POPULAIRE';position:absolute;top:1rem;right:-2rem;background:linear-gradient(135deg,#d4a017,#c0392b);color:#0b0b0b;font-size:0.65rem;font-weight:800;padding:0.3rem 2.5rem;transform:rotate(45deg);letter-spacing:0.1em}
+
+.pricing-card .plan-name{font-size:1.1rem;font-weight:700;color:#d4a017;margin-bottom:0.25rem}
+.pricing-card .plan-sub{font-size:0.85rem;color:#666;margin-bottom:1.5rem}
+.pricing-card .price{font-size:3rem;font-weight:900;line-height:1}
+.pricing-card .price .currency{font-size:1.5rem;vertical-align:top;margin-right:2px}
+.pricing-card .price .period{font-size:0.9rem;font-weight:400;color:#888}
+.pricing-card .price-sub{font-size:0.8rem;color:#666;margin-top:0.25rem;margin-bottom:1.5rem}
+.pricing-card .price-original{font-size:0.85rem;color:#555;text-decoration:line-through;margin-bottom:0.25rem}
+
+.pricing-card .btn-subscribe{display:block;width:100%;padding:1rem;border-radius:12px;font-weight:700;font-size:1rem;border:none;cursor:pointer;transition:all 0.3s;text-align:center;margin:1.5rem 0}
+.pricing-card .btn-subscribe.gold{background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;box-shadow:0 4px 20px rgba(212,160,23,0.2)}
+.pricing-card .btn-subscribe.gold:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(212,160,23,0.4)}
+.pricing-card .btn-subscribe.outline{background:transparent;border:2px solid #d4a017;color:#d4a017}
+.pricing-card .btn-subscribe.outline:hover{background:rgba(212,160,23,0.1)}
+
+.features-list{list-style:none;padding:0;margin-top:1rem}
+.features-list li{display:flex;align-items:flex-start;gap:0.75rem;padding:0.6rem 0;font-size:0.9rem;color:#ccc;border-bottom:1px solid #1a1a1a}
+.features-list li:last-child{border-bottom:none}
+.features-list li .check{color:#27ae60;font-weight:700;flex-shrink:0}
+.features-list li .cross{color:#c0392b;font-weight:700;flex-shrink:0}
+.features-list li .star{color:#d4a017;flex-shrink:0}
+.features-list li .muted{color:#555}
+
+/* Back to home */
+.back-home{text-align:center;padding:4rem 0}
+.back-home a{display:inline-flex;align-items:center;gap:0.5rem;color:#888;font-size:0.9rem;transition:color 0.2s}
+.back-home a:hover{color:#d4a017}
+
+/* Footer */
+footer{border-top:1px solid #1a1a1a;padding:3rem 2rem;text-align:center}
+footer .footer-brand{font-weight:900;font-size:1.5rem;margin-bottom:0.5rem}
+footer .footer-brand .gold{color:#d4a017}
+footer .footer-brand .red{color:#c0392b}
+footer p{color:#555;font-size:0.85rem}
+footer .footer-links{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0;flex-wrap:wrap}
+footer .footer-links a{color:#888;font-size:0.85rem;transition:color 0.2s}
+footer .footer-links a:hover{color:#d4a017}
+
+/* Noise */
+.noise{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")}
+
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr}.pricing-card{padding:2rem 1.5rem}.service-hero{padding:6rem 1.5rem 3rem}}
+</style>

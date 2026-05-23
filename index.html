@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuxPoProno — L'agence des bonnes cotes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#0b0b0b;color:#f5f5f5;overflow-x:hidden}
+    ::selection{background:#d4a017;color:#0b0b0b}
+    a{text-decoration:none;color:inherit}
+    ::-webkit-scrollbar{width:8px}
+    ::-webkit-scrollbar-track{background:#1a1a1a}
+    ::-webkit-scrollbar-thumb{background:#d4a017;border-radius:4px}
+
+    .hero{min-height:100vh;background:linear-gradient(135deg,#0b0b0b 0%,#1a0f00 50%,#0b0b0b 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(212,160,23,0.08) 0%,transparent 60%),radial-gradient(circle at 70% 60%,rgba(200,50,50,0.06) 0%,transparent 50%);pointer-events:none}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(212,160,23,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,160,23,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+
+    .logo-container{position:relative;margin-bottom:1rem}
+    .logo-svg{width:180px;height:180px;filter:drop-shadow(0 0 40px rgba(212,160,23,0.3))}
+    .logo-svg .ring{fill:none;stroke:#d4a017;stroke-width:3}
+    .logo-svg .ring-secondary{fill:none;stroke:#8b2020;stroke-width:2.5;opacity:0.6}
+    .logo-svg .cote{fill:#d4a017;font-family:'Inter',sans-serif;font-weight:900;font-size:28px}
+    .logo-svg .cote-sm{fill:#f5f5f5;font-family:'Inter',sans-serif;font-weight:700;font-size:12px}
+    .logo-svg .steak{fill:#8b2020;font-size:40px}
+
+    .hero h1{font-size:clamp(3rem,8vw,6rem);font-weight:900;text-align:center;line-height:1;margin-top:1rem;position:relative}
+    .hero h1 .gold{color:#d4a017}
+    .hero h1 .red{color:#c0392b}
+    .hero h1 .white{color:#f5f5f5}
+    .hero .tagline{font-size:clamp(1rem,2.5vw,1.5rem);color:#a0a0a0;margin-top:1.5rem;text-align:center;max-width:600px;letter-spacing:0.05em;position:relative}
+    .hero .tagline strong{color:#d4a017;font-weight:700}
+    .hero .cta-group{display:flex;gap:1rem;margin-top:3rem;flex-wrap:wrap;justify-content:center;position:relative}
+
+    .btn{padding:1rem 2.5rem;border-radius:50px;font-weight:700;font-size:1rem;transition:all 0.3s ease;border:none;cursor:pointer;letter-spacing:0.03em}
+    .btn-gold{background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;box-shadow:0 4px 25px rgba(212,160,23,0.3)}
+    .btn-gold:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(212,160,23,0.5)}
+    .btn-outline{background:transparent;border:2px solid #d4a017;color:#d4a017}
+    .btn-outline:hover{background:rgba(212,160,23,0.1);transform:translateY(-3px)}
+
+    .floating-element{position:absolute;font-size:1.5rem;opacity:0.06;font-weight:900;pointer-events:none;animation:float 20s infinite linear}
+    @keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-30px) rotate(5deg)}100%{transform:translateY(0) rotate(0deg)}}
+
+    section{padding:6rem 2rem;position:relative}
+    .section-label{display:inline-block;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;color:#d4a017;text-transform:uppercase;margin-bottom:0.75rem;border-left:3px solid #d4a017;padding-left:1rem}
+    .section-title{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;margin-bottom:1rem;line-height:1.1}
+    .container{max-width:1200px;margin:0 auto}
+    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem}
+    .service-card{background:linear-gradient(145deg,#151515,#1a1a1a);border:1px solid #222;border-radius:20px;padding:2rem;transition:all 0.4s ease;position:relative;overflow:hidden}
+    .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#d4a017,#c0392b);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+    .service-card:hover::before{transform:scaleX(1)}
+    .service-card:hover{border-color:#d4a017;transform:translateY(-5px);box-shadow:0 20px 40px rgba(212,160,23,0.1)}
+    .service-icon{font-size:2.5rem;margin-bottom:1rem}
+    .service-card h3{font-size:1.35rem;font-weight:700;margin-bottom:0.75rem}
+    .service-card p{color:#999;line-height:1.6;font-size:0.95rem}
+    .service-badge{display:inline-block;background:rgba(212,160,23,0.15);color:#d4a017;font-size:0.7rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:50px;margin-top:1rem;letter-spacing:0.05em}
+    .service-cta{display:block;margin-top:1.2rem;padding:0.7rem 1rem;background:linear-gradient(135deg,#d4a017,#f0c040);color:#0b0b0b;border-radius:10px;font-weight:700;font-size:0.85rem;text-align:center;transition:all 0.3s ease;text-decoration:none}
+    .service-cta:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(212,160,23,0.3)}
+
+    .cotes-board{background:linear-gradient(135deg,#0f0f0f,#1a0f00);border-top:1px solid #222;border-bottom:1px solid #222}
+    .match-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:3rem}
+    .match-card{background:#111;border:1px solid #1e1e1e;border-radius:16px;padding:1.5rem;transition:all 0.3s ease}
+    .match-card:hover{border-color:#333;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+    .match-teams{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    .match-team{display:flex;flex-direction:column;align-items:center;gap:0.3rem}
+    .match-team .abbr{font-weight:800;font-size:1.1rem}
+    .match-team .name{font-size:0.75rem;color:#888}
+    .match-vs{color:#d4a017;font-weight:900;font-size:1.2rem}
+    .match-odds{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem}
+    .odd-btn{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:0.6rem 0.5rem;text-align:center;cursor:pointer;transition:all 0.2s ease}
+    .odd-btn:hover{background:#d4a017;border-color:#d4a017;color:#0b0b0b}
+    .odd-btn .odd-label{font-size:0.65rem;color:#888;display:block;margin-bottom:0.2rem}
+    .odd-btn:hover .odd-label{color:#0b0b0b}
+    .odd-btn .odd-value{font-size:1.1rem;font-weight:800}
+    .match-info{display:flex;justify-content:space-between;margin-top:1rem;font-size:0.75rem;color:#555}
+    .match-info .hot{color:#e74c3c;font-weight:700}
+
+    .testimonials{background:linear-gradient(180deg,#0b0b0b,#0f0900)}
+    .testimonial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:3rem}
+    .testimonial-card{background:linear-gradient(145deg,#141414,#1a1a1a);border:1px solid #222;border-radius:16px;padding:1.5rem;position:relative}
+    .testimonial-card::before{content:'"';font-family:'Playfair Display',serif;font-size:4rem;color:#d4a017;opacity:0.2;position:absolute;top:0.5rem;left:1rem;line-height:1}
+    .testimonial-text{font-style:italic;line-height:1.7;color:#ccc;font-size:0.95rem;margin-bottom:1rem}
+    .testimonial-author{display:flex;align-items:center;gap:0.75rem}
+    .testimonial-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#c0392b);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;color:#0b0b0b}
+    .testimonial-name{font-weight:700;font-size:0.9rem}
+    .testimonial-handle{color:#888;font-size:0.8rem}
+    .testimonial-stars{color:#d4a017;letter-spacing:2px;font-size:0.8rem;margin-left:auto}
+
+    .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3rem;text-align:center}
+    .stat-item .stat-number{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:#d4a017;line-height:1}
+    .stat-item .stat-label{color:#888;font-size:0.9rem;margin-top:0.5rem}
+
+    .montantes-list{margin-top:2rem;display:grid;gap:1rem}
+    .montante-item{display:flex;align-items:center;gap:1rem;background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:1rem 1.5rem;transition:all 0.3s ease}
+    .montante-item:hover{border-color:#d4a017;background:#151515}
+    .montante-rank{font-weight:900;font-size:1.3rem;color:#d4a017;min-width:2rem}
+    .montante-info{flex:1}
+    .montante-info h4{font-weight:700;font-size:1rem}
+    .montante-info p{color:#888;font-size:0.85rem}
+    .montante-profit{font-weight:800;font-size:1.1rem;color:#27ae60}
+
+    .cta-banner{background:linear-gradient(135deg,#d4a017,#c0392b);border-radius:20px;padding:4rem 3rem;text-align:center;margin-top:3rem;position:relative;overflow:hidden}
+    .cta-banner::before{content:'🥩';position:absolute;font-size:10rem;opacity:0.08;right:-2rem;bottom:-2rem;transform:rotate(-15deg)}
+    .cta-banner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:#0b0b0b;margin-bottom:1rem}
+    .cta-banner p{color:rgba(0,0,0,0.7);max-width:600px;margin:0 auto 2rem;font-size:1.1rem}
+    .cta-banner .btn{background:#0b0b0b;color:#f5f5f5;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+    .cta-banner .btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+
+    footer{border-top:1px solid #1a1a1a;padding:3rem 2rem;text-align:center}
+    footer .footer-brand{font-weight:900;font-size:1.5rem;margin-bottom:0.5rem}
+    footer .footer-brand .gold{color:#d4a017}
+    footer .footer-brand .red{color:#c0392b}
+    footer p{color:#555;font-size:0.85rem}
+    footer .footer-links{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0;flex-wrap:wrap}
+    footer .footer-links a{color:#888;font-size:0.85rem;transition:color 0.2s}
+    footer .footer-links a:hover{color:#d4a017}
+
+    .fade-in{opacity:0;transform:translateY(30px);transition:all 0.8s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+
+    .buteurs-ticker{background:#111;border-top:1px solid #222;border-bottom:1px solid #222;padding:0.8rem 0;overflow:hidden;white-space:nowrap}
+    .buteurs-ticker-inner{display:inline-block;animation:ticker 30s linear infinite}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .buteurs-ticker span{display:inline-block;margin-right:3rem;font-size:0.85rem}
+    .buteurs-ticker .goal{color:#d4a017;font-weight:700}
+    .buteurs-ticker .name{color:#f5f5f5}
+    .buteurs-ticker .time{color:#555}
+
+    .noise{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.015;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")}
+
+    @media(max-width:768px){section{padding:4rem 1.5rem}.hero h1{font-size:clamp(2.5rem,10vw,4rem)}.match-grid{grid-template-columns:1fr}.cta-banner{padding:3rem 1.5rem}}
+  </style>
+</head>
+<body>
+<div class="noise"></div>
+
+<header class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="floating-element" style="top:10%;left:5%;animation-duration:22s;">🥩</div>
+  <div class="floating-element" style="top:20%;right:8%;animation-duration:18s;opacity:0.04;">⚽</div>
+  <div class="floating-element" style="bottom:25%;left:10%;animation-duration:25s;">🔥</div>
+  <div class="floating-element" style="bottom:15%;right:5%;animation-duration:20s;opacity:0.04;">💰</div>
+  <div class="logo-container">
+    <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle class="ring" cx="100" cy="100" r="85"/>
+      <circle class="ring-secondary" cx="100" cy="100" r="75"/>
+      <path d="M100 30 L115 70 L155 55 L125 85 L145 115 L105 100 L85 125 L75 95 L50 115 L65 85 L45 55 L85 70 Z" fill="#d4a017" opacity="0.15"/>
+      <text x="100" y="88" text-anchor="middle" class="steak">🥩</text>
+      <text x="100" y="118" text-anchor="middle" class="cote">LUXPO</text>
+      <text x="100" y="143" text-anchor="middle" class="cote-sm">PRONO</text>
+      <rect x="45" y="100" width="4" height="4" fill="#d4a017" transform="rotate(45 47 102)"/>
+      <rect x="151" y="100" width="4" height="4" fill="#d4a017" transform="rotate(45 153 102)"/>
+    </svg>
+  </div>
+  <h1><span class="gold">LUXPO</span><br><span class="white">PRONO</span></h1>
+  <p class="tagline">Le <strong>roi des bonnes cotes</strong> — paris sportifs, montantes, buteurs &amp; côtes fun</p>
+  <div class="cta-group">
+    🔥 Voir les cotes</a>
+    <a href="#services" class="btn btn-outline">Nos services</a>
+  </div>
+</header>
+
+
+
+<section id="services">
+  <div class="container">
+    <span class="section-label">✦ Services</span>
+    <h2 class="section-title">L'agence <span class="gold">des bonnes côtes</span></h2>
+    <p style="color:#888;max-width:600px;">Paris safe, montantes, analyses — on te donne les armes pour gagner. Ici, chaque cote est une entrecôte bien saignante — LuxPoProno style.</p>
+    <div class="services-grid">
+      <a href="services/paris-safe.html" style="text-decoration:none;color:inherit;display:block"><a href="services/buteurs.html" style="text-decoration:none;color:inherit;display:block"><a href="services/cotes-fun.html" style="text-decoration:none;color:inherit;display:block"><a href="services/montantes.html" style="text-decoration:none;color:inherit;display:block"><div class="service-card fade-in">
+        <div class="service-icon">🛡️</div>
+        <h3>Paris Safe</h3>
+        <p>Pronos sécurisés avec un taux de réussite validé. On mise intelligemment, pas comme un bourrin.</p>
+        <span class="service-badge">88% réussite</span>
+        <a href="services/paris-safe.html" class="service-cta">Souscrire un abonnement →</a>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon">⚽</div>
+        <h3>Buteurs du Jour</h3>
+        <p>Nos picks buteurs chaque weekend. Analyse des stats, forme du moment, confrontations directes.</p>
+        <span class="service-badge">+42 buteurs trouvés</span>
+        <a href="services/buteurs.html" class="service-cta">Souscrire un abonnement →</a>
+      </div></a>
+      <div class="service-card fade-in">
+        <div class="service-icon">🎯</div>
+        <h3>Côtes Fun</h3>
+        <p>Des cotes à 2.50+ qu'on sent passer. Un peu de risque, beaucoup de goût — comme une bonne entrecôte.</p>
+        <span class="service-badge">Cotes 2.00–8.00</span>
+        <a href="services/cotes-fun.html" class="service-cta">Souscrire un abonnement →</a>
+      </div></a>
+      <div class="service-card fade-in">
+        <div class="service-icon">📈</div>
+        <h3>Montantes</h3>
+        <p>Nos séquences montantes exclusives. Suis la courbe, encaisse. Stratégie testée et approuvée.</p>
+        <span class="service-badge">🔥 Série en cours</span>
+        <a href="services/montantes.html" class="service-cta">Souscrire un abonnement →</a>
+      </div></a>
+      <div class="service-card fade-in">
+        <div class="service-icon">🧠</div>
+        <h3>Analyses VIP</h3>
+        <p>Avant-match, stats avancées, compos probables. Le même niveau d'analyse qu'un DS de club pro.</p>
+        <span class="service-badge">Premium</span>
+        <a href="services/analyses-vip.html" class="service-cta">Souscrire un abonnement →</a>
+      </div></a>
+      <div class="service-card fade-in">
+        <div class="service-icon">💎</div>
+        <h3>Conseils Bankroll</h3>
+        <p>Gère ton capital comme un pro. Unités, % de bankroll, discipline — le vrai edge est dans la gestion.</p>
+        <span class="service-badge">Pour les winners</span>
+        <a href="services/bankroll.html" class="service-cta">Souscrire un abonnement →</a>
+      </div></a>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item fade-in"><div class="stat-number">88%</div><div class="stat-label">Taux de réussite</div></div>
+      <div class="stat-item fade-in"><div class="stat-number">+1 200</div><div class="stat-label">Membres actifs</div></div>
+      <div class="stat-item fade-in"><div class="stat-number">4.8★</div><div class="stat-label">Note moyenne</div></div>
+      <div class="stat-item fade-in"><div class="stat-number">🥩</div><div class="stat-label">Côtes servies saignantes</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cotes-board" id="cotes">
+  <div class="container">
+    <span class="section-label">🔥 Cotes du moment</span>
+    <h2 class="section-title">Les <span class="gold">meilleures cotes</span> de la semaine</h2>
+    <p style="color:#888;max-width:600px;">Inspiré des pros. Affiché en direct, comme sur un vrai board.</p>
+    <div class="match-grid">
+      <div class="match-card fade-in">
+        <div class="match-teams">
+          <div class="match-team"><span class="abbr">PSG</span><span class="name">Paris SG</span></div>
+          <span class="match-vs">VS</span>
+          <div class="match-team"><span class="abbr">OM</span><span class="name">Marseille</span></div>
+        </div>
+        <div class="match-odds">
+          <div class="odd-btn"><span class="odd-label">1</span><span class="odd-value">1.65</span></div>
+          <div class="odd-btn"><span class="odd-label">N</span><span class="odd-value">3.80</span></div>
+          <div class="odd-btn"><span class="odd-label">2</span><span class="odd-value">4.20</span></div>
+        </div>
+        <div class="match-info"><span>📺 Samedi 21:00 · Ligue 1</span><span class="hot">🔥 Match chaud</span></div>
+      </div>
+      <div class="match-card fade-in">
+        <div class="match-teams">
+          <div class="match-team"><span class="abbr">RMA</span><span class="name">Real Madrid</span></div>
+          <span class="match-vs">VS</span>
+          <div class="match-team"><span class="abbr">FCB</span><span class="name">FC Barcelone</span></div>
+        </div>
+        <div class="match-odds">
+          <div class="odd-btn"><span class="odd-label">1</span><span class="odd-value">2.20</span></div>
+          <div class="odd-btn"><span class="odd-label">N</span><span class="odd-value">3.50</span></div>
+          <div class="odd-btn"><span class="odd-label">2</span><span class="odd-value">3.10</span></div>
+        </div>
+        <div class="match-info"><span>📺 Dimanche 21:00 · Liga</span><span class="hot">🔥 Buteur: Mbappé @3.40</span></div>
+      </div>
+      <div class="match-card fade-in">
+        <div class="match-teams">
+          <div class="match-team"><span class="abbr">LIV</span><span class="name">Liverpool</span></div>
+          <span class="match-vs">VS</span>
+          <div class="match-team"><span class="abbr">ARS</span><span class="name">Arsenal</span></div>
+        </div>
+        <div class="match-odds">
+          <div class="odd-btn"><span class="odd-label">1</span><span class="odd-value">2.40</span></div>
+          <div class="odd-btn"><span class="odd-label">N</span><span class="odd-value">3.60</span></div>
+          <div class="odd-btn"><span class="odd-label">2</span><span class="odd-value">2.85</span></div>
+        </div>
+        <div class="match-info"><span>📺 Dimanche 17:30 · PL</span><span class="hot">🔥 Salah buteur @3.10</span></div>
+      </div>
+      <div class="match-card fade-in">
+        <div class="match-teams">
+          <div class="match-team"><span class="abbr">BAY</span><span class="name">Bayern Munich</span></div>
+          <span class="match-vs">VS</span>
+          <div class="match-team"><span class="abbr">BVB</span><span class="name">Dortmund</span></div>
+        </div>
+        <div class="match-odds">
+          <div class="odd-btn"><span class="odd-label">1</span><span class="odd-value">1.55</span></div>
+          <div class="odd-btn"><span class="odd-label">N</span><span class="odd-value">4.20</span></div>
+          <div class="odd-btn"><span class="odd-label">2</span><span class="odd-value">4.80</span></div>
+        </div>
+        <div class="match-info"><span>📺 Samedi 18:30 · Bundesliga</span><span class="hot">🔥 Kane buteur @2.45</span></div>
+      </div>
+    </div>
+      <span style="display:inline-flex;align-items:center;gap:0.5rem;background:#151515;border:1px solid #222;border-radius:50px;padding:0.6rem 1.5rem;font-size:0.85rem;color:#888;">🥩 Cotes actualisées en direct · Mise min: 1€ · Max: la raison</span>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <span class="section-label">📈 Montantes</span>
+    <h2 class="section-title">Les <span class="gold">sequences</span> qui montent</h2>
+    <p style="color:#888;max-width:600px;">Sélection des montantes actives. Chaque palier est validé avant de grimper.</p>
+    <div class="montantes-list">
+      <div class="montante-item fade-in">
+        <span class="montante-rank">#1</span>
+        <div class="montante-info"><h4>🚀 Fusée du Weekend</h4><p>PSG 1.65 → OM 4.20 → Bayern 1.55 → Liverpool 2.40</p></div>
+        <span class="montante-profit">+412€</span>
+      </div>
+      <div class="montante-item fade-in">
+        <span class="montante-rank">#2</span>
+        <div class="montante-info"><h4>🔥 Côte Fun Express</h4><p>Real 2.20 + Nul OM @3.80 + Buteur Kane @2.45</p></div>
+        <span class="montante-profit">+287€</span>
+      </div>
+      <div class="montante-item fade-in">
+        <span class="montante-rank">#3</span>
+        <div class="montante-info"><h4>🥩 Saignante Spéciale</h4><p>Buteur Mbappé @3.40 + Arsenal N @3.60 + PSG 1 @1.65</p></div>
+        <span class="montante-profit">+175€</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="avis">
+  <div class="container">
+    <span class="section-label">💬 Témoignages</span>
+    <h2 class="section-title">La <span class="gold">communaute</span> parle</h2>
+    <p style="color:#888;max-width:600px;">Vrais membres, vrais résultats. Pas de blabla.</p>
+    <div class="testimonial-grid">
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">Je te suis depuis tes pronos sur TikTok, t'es le boss luxpoprono ! J'ai claqué une montante à 7.50 la semaine dernière, jamais vu ça.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">LK</div>
+          <div><div class="testimonial-name">Lucas K.</div><div class="testimonial-handle">@lucas_pronos • Membre depuis 3 mois</div></div>
+          <div class="testimonial-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">Les paris safe c'est ouf, j'ai doublé mon bankroll en 2 semaines. Avant je flambais comme un débile, maintenant j'ai une méthode. Merci l'équipe !</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div><div class="testimonial-name">Mehdi R.</div><div class="testimonial-handle">@mehdi_du_93 • Membre depuis 1 mois</div></div>
+          <div class="testimonial-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">Le concept LuxPoProno c'est trop stylé. Entre les cotes de jeu et les côtes d'entrecôte, vous gérez. Les analyses VIP m'ont fait gagner 800€ sur le Classico.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AZ</div>
+          <div><div class="testimonial-name">Amine Z.</div><div class="testimonial-handle">@amine_paris • Membre depuis 6 mois</div></div>
+          <div class="testimonial-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">TikTok m'a amené ici, les résultats m'ont fait rester. Mon premier mois j'étais sceptique, maintenant je suis à +350€. Du lourd.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SD</div>
+          <div><div class="testimonial-name">Sofiane D.</div><div class="testimonial-handle">@sofi_tips • Membre depuis 2 mois</div></div>
+          <div class="testimonial-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">Enfin une agence qui parle vrai. Les montantes sont clean, les analyses tiennent la route. Et le logo LuxPoProno avec le ballon, jpp c'est cultissime.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">KB</div>
+          <div><div class="testimonial-name">Karim B.</div><div class="testimonial-handle">@karim_betting • Membre depuis 1 mois</div></div>
+          <div class="testimonial-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Rejoins le roi des bonnes cotes 👑</h2>
+      <p>Paris safe, montantes qui déchirent, analyses affûtées. Et une communauté qui kiffe les côtes — les vraies comme les virtuelles.e les virtuelles.</p>
+      <a href="#top" class="btn">🔥 LUXPO PRONO</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand"><span class="gold">LUXPO</span> <span class="red">PRONO</span></div>
+  <p style="margin-bottom:1rem;">L'agence des bonnes cotes — paris sportifs, conseils et communauté</p>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#cotes">Cotes</a>
+    <a href="#avis">Avis</a>
+    <a href="#">Mentions légales</a>
+    <a href="#">Contact</a>
+  </div>
+  <p>© 2026 LuxPoProno · Le roi des bonnes cotes 🥩⚽</p>
+  <p style="margin-top:0.5rem;color:#333;font-size:0.75rem;">Disclaimer : Les paris sportifs comportent des risques. Joue responsablement.</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
