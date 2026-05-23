@@ -4,7 +4,7 @@ const Stripe = require('stripe');
 
 // ⚠️ Sur Vercel, mets ta clé secrète dans les variables d'environnement
 // Dans le dashboard Vercel : Settings → Environment Variables → STRIPE_SECRET_KEY
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_51TaHWhLXYN8EiWGewWE7Hklccdjq8lhGXAdfyf4j2H014jWg2VQDfKo02lunAANgO4Rb6ouM0TM9UQchkXD8mhWg002twno74c');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);  // Définie dans Vercel → Environment Variables
 
 module.exports = async (req, res) => {
   // CORS pour autoriser le front-end
